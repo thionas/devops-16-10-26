@@ -113,7 +113,7 @@ async def post_tarefa(sessao: SESSAO, titulo: str, descricao: str = None):
 @APP.get("/tarefas/{id_tarefa}")
 async def tarefa_especifica(sessao: SESSAO, id_tarefa: int) -> Tarefa:
     """Rota para visualizar uma tarefa específica"""
-    
+
     regra = select(Tarefa).where(Tarefa.id == id_tarefa)
     resultado = sessao.exec(regra).all()
 
@@ -142,7 +142,7 @@ async def concluir_tarefa(sessao: SESSAO, id_tarefa: int):
 
     if resultado[0].concluida is True:
         LOGGER.info(
-            "Usuário tentou finalizar a tarefa " 
+            "Usuário tentou finalizar a tarefa"
             f"{resultado[0].get_id()} que já está finalizada"
         )
         return {"mensagem": "Tarefa já finalizada"}
