@@ -115,3 +115,8 @@ def test_autor(cliente: TestClient):
 
     assert resposta.status_code == 200
     assert resposta.json() == {"mensagem": "Thionas Nascimento"}
+
+def test_rota_inexistente(cliente: TestClient):
+    resposta = cliente.get("/rota_inexistente")
+    assert resposta.status_code == 200
+    assert resposta.json() == {"mensagem": "Página inexistente"}

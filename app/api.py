@@ -7,6 +7,7 @@ import sys
 import logging
 
 from fastapi import FastAPI, Depends
+from fastapi.responses import JSONResponse
 from sqlmodel import SQLModel, Session, create_engine, select
 
 from .modelo import Tarefa
@@ -70,6 +71,13 @@ async def inicializacao(_: FastAPI):
 APP = FastAPI(lifespan=inicializacao)
 TAREFAS = []
 
+# Trata erro 404
+@APP.exception_handler(404)
+async def trata_404(_, __):
+    """ Rota para erros. """
+    LOGGER.error("Página inexistente")
+    return JSONResponse({"mensagem": "Página inexistente"})
+
 
 # GET /tarefas: Lista todas as tarefas (somente id e titulo)
 @APP.get("/tarefas")
@@ -94,6 +102,9 @@ async def post_tarefa(sessao: SESSAO, titulo: str, descricao: str = None):
         data_criacao=data,
     )
 
+    LOGGER.info("Usuário criou uma tarefa")
+    LOGGER.debug(f"Tarefa criada: {tarefa_nova}")
+
     sessao.add(tarefa_nova)
     sessao.commit()
     sessao.refresh(tarefa_nova)
@@ -105,13 +116,15 @@ async def post_tarefa(sessao: SESSAO, titulo: str, descricao: str = None):
 @APP.get("/tarefas/{id_tarefa}")
 async def tarefa_especifica(sessao: SESSAO, id_tarefa: int) -> Tarefa:
     """Rota para visualizar uma tarefa específica"""
-    # select * from tarefas where id == id_tarefa
+    
     regra = select(Tarefa).where(Tarefa.id == id_tarefa)
     resultado = sessao.exec(regra).all()
 
     if resultado:
+        LOGGER.info(f"Usuário listou a tafefa {resultado[0].get_id()}")
         return resultado[0]
 
+    LOGGER.info("Usuário tentou acessar uma tarefa inexistente")
     return {"mensagem": "Tarefa não existe"}
 
 
@@ -128,9 +141,14 @@ async def concluir_tarefa(sessao: SESSAO, id_tarefa: int):
     resultado = sessao.exec(regra).all()
 
     if not resultado:
+        LOGGER.info("Usuário tentou finalizar uma tarefa inexistente")
         return {"mensagem": "Tarefa não existe"}
 
     if resultado[0].concluida is True:
+        LOGGER.info(
+            "Usuário tentou finalizar a tarefa " 
+            f"{resultado[0].get_id()} que já está finalizada"
+        )
         return {"mensagem": "Tarefa já finalizada"}
 
     resultado[0].finalizar()
@@ -139,6 +157,7 @@ async def concluir_tarefa(sessao: SESSAO, id_tarefa: int):
     sessao.commit()
     sessao.refresh(resultado[0])
 
+    LOGGER.info(f"Usuário finalizou a tafefa {resultado[0].get_id()}")
     return {"mensagem": "Tarefa atualizada"}
 
 
@@ -151,6 +170,7 @@ async def apagar_tarefa(sessao: SESSAO, id_tarefa: int):
     resultado = sessao.exec(regra).all()
 
     if not resultado:
+        LOGGER.info("Usuário tentou apagar uma tarefa inexistente")
         return {"mensagem": "Tarefa não existe"}
 
     tarefa = resultado[0]
@@ -158,12 +178,14 @@ async def apagar_tarefa(sessao: SESSAO, id_tarefa: int):
     sessao.delete(tarefa)
     sessao.commit()
 
+    LOGGER.info(f"Usuário removeu a tarefa {tarefa.get_id()}")
     return {"mensagem": "Tarefa removida"}
 
-
+# Rota Raiz
 @APP.get("/")
 async def index():
     """Rota raíz."""
+    LOGGER.info("Usuário acessou a raíz")
     return {"mensagem": "Olá, mundo!"}
 
 
@@ -172,12 +194,5 @@ async def index():
 @APP.get("/autor")
 async def autor():
     """Rota para retornar o autor da aplicação"""
+    LOGGER.info("Usuário consultou o autor")
     return {"mensagem": "Thionas Nascimento"}
-
-
-# 2. Criar um teste unitário para verificar se a rota
-# está produzindo o resultado esperado
-
-# 3. Verificar se o código está no padrão do PyLint
-
-# 4. Enviar o código para o repositório (git push)
