@@ -60,4 +60,3 @@ jobs:
     steps:
       - name: Deploy hook
         run: curl -X GET ${{ secrets.RENDER_DEPLOY_HOOK }}
-        

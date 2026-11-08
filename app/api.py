@@ -96,11 +96,7 @@ async def tarefas(sessao: SESSAO) -> List[Tarefa]:
 async def post_tarefa(sessao: SESSAO, titulo: str, descricao: str = None):
     """Rota para criar uma tarefa."""
     data = datetime.now().astimezone(timezone.utc).replace(microsecond=0)
-    tarefa_nova = Tarefa(
-        titulo=titulo,
-        descricao=descricao,
-        data_criacao=data,
-    )
+    tarefa_nova = Tarefa(titulo=titulo,descricao=descricao,data_criacao=data,)
 
     LOGGER.info("Usuário criou uma tarefa")
     LOGGER.debug(f"Tarefa criada: {tarefa_nova}")
@@ -110,7 +106,6 @@ async def post_tarefa(sessao: SESSAO, titulo: str, descricao: str = None):
     sessao.refresh(tarefa_nova)
 
     return {"mensagem": "OK"}
-
 
 # GET /tarefas/{id_tarefa}: Visualizar tarefa específica
 @APP.get("/tarefas/{id_tarefa}")
@@ -126,7 +121,6 @@ async def tarefa_especifica(sessao: SESSAO, id_tarefa: int) -> Tarefa:
 
     LOGGER.info("Usuário tentou acessar uma tarefa inexistente")
     return {"mensagem": "Tarefa não existe"}
-
 
 # PUT /tarefas/{id}: Atualiza tarefa específica
 @APP.put("/tarefas/{id_tarefa}")
