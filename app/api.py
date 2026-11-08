@@ -50,10 +50,6 @@ if DATABASE is None:
     LOGGER.critical("DATABASE está faltando")
     sys.exit(1)
 
-LOGGER.info("DATABASE_ADDRESS=%s", DATABASE_ADDRESS)
-LOGGER.info("DATABASE=%s", DATABASE)
-LOGGER.info("DATABASE_USERNAME=%s", DATABASE_USERNAME)
-
 ENGINE = create_engine(
     f"postgresql+psycopg://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_ADDRESS}/{DATABASE}"
 )
