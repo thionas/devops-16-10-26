@@ -152,7 +152,7 @@ async def concluir_tarefa(sessao: SESSAO, id_tarefa: int):
     sessao.commit()
     sessao.refresh(resultado[0])
 
-    LOGGER.info(f"Usuário finalizou a tafefa {resultado[0].get_id()}")
+    LOGGER.info(f"Usuário finalizou a tarefa {resultado[0].get_id()}")
     return {"mensagem": "Tarefa atualizada"}
 
 
