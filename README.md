@@ -167,5 +167,5 @@ O ciclo de vida de desenvolvimento é automatizado via **GitHub Actions**:
 
 ## 👤 Autor
 
-* **Desenvolvido por:** [Seu Nome / @thionas](https://github.com/thionas)
+* **Desenvolvido por:** [Thionas / @thionas](https://github.com/thionas)
 * **Repositório:** [devops-16-10-26](https://github.com/thionas/devops-16-10-26)
