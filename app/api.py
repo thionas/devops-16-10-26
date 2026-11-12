@@ -5,6 +5,7 @@ from typing import Annotated, List
 import os
 import sys
 import logging
+# teste
 
 from fastapi import FastAPI, Depends
 from fastapi.responses import JSONResponse
